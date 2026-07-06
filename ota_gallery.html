@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OTA | Gallery</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f4f4;color:#222;}
+
+    /* TOP BAR */
+    .top-bar{background:#c0392b;color:#fff;font-size:13px;padding:6px 20px;display:flex;justify-content:flex-end;gap:20px;}
+    .top-bar a{color:#fff;text-decoration:none;}
+
+    /* HEADER */
+    header{background:#fff;display:flex;align-items:center;padding:12px 40px;box-shadow:0 2px 6px rgba(0,0,0,.1);gap:20px;}
+    header img.logo{height:78px;}
+    .header-title h1{font-size:21px;color:#c0392b;font-weight:800;letter-spacing:1px;}
+    .header-title p{font-size:13px;color:#555;margin-top:2px;}
+
+    /* NAV */
+    nav{background:#c0392b;display:flex;flex-wrap:wrap;}
+    nav a{color:#fff;text-decoration:none;padding:13px 18px;font-size:14px;font-weight:600;display:block;transition:background .2s;}
+    nav a:hover,nav a.active{background:#96281b;}
+    .dropdown{position:relative;}
+    .dropdown-content{display:none;position:absolute;top:100%;left:0;background:#fff;min-width:230px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:999;}
+    .dropdown-content a{color:#333;padding:10px 16px;font-size:13px;border-bottom:1px solid #eee;}
+    .dropdown-content a:hover{background:#f9e0de;color:#c0392b;}
+    .dropdown:hover .dropdown-content{display:block;}
+
+    /* PAGE BANNER */
+    .page-banner{background:linear-gradient(135deg,#c0392b 0%,#7b241c 100%);color:#fff;text-align:center;padding:34px 20px;}
+    .page-banner h1{font-size:28px;font-weight:800;letter-spacing:3px;text-transform:uppercase;}
+    .page-banner p{font-size:14px;opacity:.85;margin-top:6px;}
+
+    /* TAB BUTTONS */
+    .tab-bar{display:flex;flex-wrap:wrap;gap:10px;max-width:1200px;margin:28px auto 0;padding:0 20px;}
+    .tab-btn{padding:10px 22px;border:2px solid #c0392b;background:#fff;color:#c0392b;font-size:14px;font-weight:700;border-radius:5px;cursor:pointer;transition:all .2s;}
+    .tab-btn:hover,.tab-btn.active{background:#c0392b;color:#fff;}
+
+    /* MAIN CONTAINER */
+    .container{max-width:1200px;margin:24px auto 30px;padding:0 20px;}
+
+    /* ── GALLERY INDEX (landing) ── */
+    #view-index{display:block;}
+    .gallery-index-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px;}
+    .gallery-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.1);cursor:pointer;transition:transform .22s,box-shadow .22s;text-decoration:none;color:inherit;display:flex;flex-direction:column;}
+    .gallery-card:hover{transform:translateY(-5px);box-shadow:0 10px 28px rgba(0,0,0,.16);}
+    .gallery-card .card-thumb{width:100%;height:190px;object-fit:cover;display:block;background:#ddd;}
+    .gallery-card .card-body{padding:18px 16px 20px;}
+    .gallery-card .card-num{font-size:11px;font-weight:800;color:#c0392b;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+    .gallery-card h3{font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px;}
+    .gallery-card p{font-size:13px;color:#666;line-height:1.6;}
+    .gallery-card .view-link{display:inline-block;margin-top:14px;color:#c0392b;font-size:13px;font-weight:700;border-bottom:2px solid #c0392b;padding-bottom:1px;}
+
+    /* ── PHOTO GRID (sub-gallery) ── */
+    #view-photos,#view-news,#view-selfies,#view-posters{display:none;}
+    .back-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid #c0392b;color:#c0392b;font-size:14px;font-weight:700;padding:8px 18px;border-radius:5px;cursor:pointer;margin-bottom:20px;transition:all .2s;}
+    .back-btn:hover{background:#c0392b;color:#fff;}
+
+    .section-heading{font-size:20px;font-weight:800;color:#c0392b;border-left:5px solid #c0392b;padding-left:12px;margin-bottom:20px;}
+    .section-sub{font-size:13px;color:#777;margin-top:4px;font-weight:400;}
+
+    .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+    .photo-item{position:relative;overflow:hidden;border-radius:8px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+    .photo-item img{width:100%;height:170px;object-fit:cover;display:block;transition:transform .28s;}
+    .photo-item:hover img{transform:scale(1.07);}
+    .photo-item .photo-date{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:5px 8px;opacity:0;transition:opacity .2s;}
+    .photo-item:hover .photo-date{opacity:1;}
+
+    /* LIGHTBOX */
+    .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;flex-direction:column;}
+    .lightbox.open{display:flex;}
+    .lightbox img{max-width:90vw;max-height:80vh;border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,.6);}
+    .lightbox .lb-date{color:#ccc;font-size:13px;margin-top:12px;}
+    .lb-close{position:absolute;top:18px;right:24px;color:#fff;font-size:32px;cursor:pointer;line-height:1;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+    .lb-close:hover{background:rgba(192,57,43,.8);}
+    .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(192,57,43,.75);color:#fff;border:none;font-size:24px;padding:14px 18px;cursor:pointer;border-radius:5px;transition:background .2s;}
+    .lb-prev:hover,.lb-next:hover{background:#c0392b;}
+    .lb-prev{left:16px;} .lb-next{right:16px;}
+    .lb-counter{color:#aaa;font-size:12px;margin-top:6px;}
+
+    /* FOOTER */
+    footer{background:#1a1a2e;color:#ccc;padding:40px 40px 20px;margin-top:10px;}
+    .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;max-width:1200px;margin:0 auto;}
+    footer h4{color:#fff;font-size:15px;margin-bottom:12px;border-bottom:2px solid #c0392b;padding-bottom:6px;}
+    footer p,footer a{font-size:13px;color:#bbb;text-decoration:none;line-height:1.8;display:block;}
+    footer a:hover{color:#e74c3c;}
+    .footer-social{display:flex;gap:10px;margin-top:8px;}
+    .footer-social a{background:#c0392b;color:#fff!important;padding:6px 12px;border-radius:4px;font-size:13px;font-weight:600;}
+    .footer-bottom{text-align:center;margin-top:30px;padding-top:16px;border-top:1px solid #333;font-size:13px;color:#888;}
+    .footer-bottom a{color:#e74c3c;display:inline;}
+
+    @media(max-width:700px){
+      header{padding:12px 14px;}
+      header img.logo{height:54px;}
+      .header-title h1{font-size:15px;}
+      .lb-prev,.lb-next{padding:10px 12px;font-size:18px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <a href="mailto:info.otapuri@gmail.com">📧 info.otapuri@gmail.com</a>
+  <span>📞 9338449446 / 7008130771</span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <img class="logo" src="https://www.odishataekwondoassociation.com/assets/images/logo.webp" alt="OTA Logo"/>
+  <div class="header-title">
+    <h1>ODISHA TAEKWONDO ASSOCIATION</h1>
+    <p>ଓଡିଶା ଟାଏକୋଣ୍ଡୋ ଆସୋସିଏସନ୍ &nbsp;|&nbsp; Established 1978 &nbsp;|&nbsp; Registered under Societies Registration Act 1982</p>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <a href="ota_homepage.html">Home</a>
+  <div class="dropdown"><a href="#">About OTA ▾</a>
+    <div class="dropdown-content">
+      <a href="#">Executive Members</a>
+      <a href="#">OTA Colour Belt Athletes</a>
+      <a href="#">OTA Black Belt Athletes</a>
+      <a href="#">OTA Colour Belt Promotion List</a>
+      <a href="#">National Player List</a>
+      <a href="#">OTA High Dan</a>
+      <a href="#">OTA Coach</a>
+      <a href="#">Technical Officials – Kyorugi</a>
+      <a href="#">Technical Officials – Poomsae</a>
+    </div>
+  </div>
+  <a href="ota_dist_association.html">District Association</a>
+  <a href="#">OTA Affiliated Clubs</a>
+  <div class="dropdown"><a href="#">Online Registration ▾</a>
+    <div class="dropdown-content">
+      <a href="#">Athlete Registration Form</a>
+      <a href="#">Belt Promotion Test Form</a>
+      <a href="#">Event Registration System</a>
+      <a href="#">Club Affiliation Form</a>
+    </div>
+  </div>
+  <div class="dropdown"><a href="#">Forms ▾</a>
+    <div class="dropdown-content">
+      <a href="#">NOC Application Form</a>
+      <a href="#">Athlete Registration Form</a>
+      <a href="#">Club Affiliation Form</a>
+      <a href="#">Black Belt Promotion Form</a>
+      <a href="#">Color Belt Promotion Form</a>
+      <a href="#">Kukkiwon Application Form</a>
+    </div>
+  </div>
+  <a href="ota_gallery.html" class="active">Gallery</a>
+  <a href="#">Event</a>
+  <a href="ota_contact.html">Contact</a>
+</nav>
+
+<!-- PAGE BANNER -->
+<div class="page-banner">
+  <h1>Visual Collections</h1>
+  <p>Browse through memories, designs, and moments.</p>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showView('index',this)">🏠 All Collections</button>
+  <button class="tab-btn" onclick="showView('photos',this)">📸 Event Photos</button>
+  <button class="tab-btn" onclick="showView('news',this)">📰 Newspaper Articles</button>
+  <button class="tab-btn" onclick="showView('selfies',this)">🤳 Selfies</button>
+  <button class="tab-btn" onclick="showView('posters',this)">🎨 Activity Posters</button>
+</div>
+
+<!-- ════════════════ MAIN CONTAINER ════════════════ -->
+<div class="container">
+
+  <!-- ── INDEX VIEW ── -->
+  <div id="view-index">
+    <div class="gallery-index-grid">
+
+      <div class="gallery-card" onclick="showView('photos',null)">
+        <img class="card-thumb" src="https://www.odishataekwondoassociation.com/assets/uploads/photos/1777483217_69f23dd1d6f26_0.jpg" alt="Event Photos"/>
+        <div class="card-body">
+          <div class="card-num">Collection 01</div>
+          <h3>Event Photos</h3>
+          <p>Highlights from our latest gatherings, conferences, and celebrations. Relive the energy.</p>
+          <span class="view-link">View Gallery →</span>
+        </div>
+      </div>
+
+      <div class="gallery-card" onclick="showView('news',null)">
+        <img class="card-thumb" src="https://www.odishataekwondoassociation.com/assets/uploads/news_photos/1763953461_6923cb35e6405.jpg" alt="News"/>
+        <div class="card-body">
+          <div class="card-num">Collection 02</div>
+          <h3>News</h3>
+          <p>Highlights from our latest gatherings, conferences, and celebrations. Relive the energy.</p>
+          <span class="view-link">View Gallery →</span>
+        </div>
+      </div>
+
+      <div class="gallery-card" onclick="showView('selfies',null)">
+        <img class="card-thumb" src="https://www.odishataekwondoassociation.com/assets/uploads/photos/1770120618_6981e5aa3beb0_0.jpg" alt="Selfies"/>
+        <div class="card-body">
+          <div class="card-num">Collection 03</div>
+          <h3>Selfies &amp; Portraits</h3>
+          <p>Candid moments and personal portraits. A closer look at the faces behind the stories.</p>
+          <span class="view-link">View Gallery →</span>
+        </div>
+      </div>
+
+      <div class="gallery-card" onclick="showView('posters',null)">
+        <img class="card-thumb" src="https://www.odishataekwondoassociation.com/assets/uploads/photos/1780625849_6a2231b9eec09_0.jpg" alt="Posters"/>
+        <div class="card-body">
+          <div class="card-num">Collection 04</div>
+          <h3>Activity Posters</h3>
+          <p>Promotional artwork, event flyers, and creative graphic designs for our activities.</p>
+          <span class="view-link">View Gallery →</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── EVENT PHOTOS ── -->
+  <div id="view-photos">
+    <button class="back-btn" onclick="showView('index',null)">← Back to Collections</button>
+    <div class="section-heading">Action Shot <span class="section-sub">— Dynamic moments from sparring, poomsae, drills, and major Taekwondo events</span></div>
+    <div class="photo-grid" id="grid-photos"></div>
+  </div>
+
+  <!-- ── NEWS ── -->
+  <div id="view-news">
+    <button class="back-btn" onclick="showView('index',null)">← Back to Collections</button>
+    <div class="section-heading">Newspaper Articles</div>
+    <div class="photo-grid" id="grid-news"></div>
+  </div>
+
+  <!-- ── SELFIES ── -->
+  <div id="view-selfies">
+    <button class="back-btn" onclick="showView('index',null)">← Back to Collections</button>
+    <div class="section-heading">Selfies &amp; Portraits</div>
+    <div class="photo-grid" id="grid-selfies"></div>
+  </div>
+
+  <!-- ── POSTERS ── -->
+  <div id="view-posters">
+    <button class="back-btn" onclick="showView('index',null)">← Back to Collections</button>
+    <div class="section-heading">Activity Posters</div>
+    <div class="photo-grid" id="grid-posters"></div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLB()">✕</button>
+  <button class="lb-prev" onclick="stepLB(-1)">❮</button>
+  <img id="lb-img" src="" alt=""/>
+  <div class="lb-date" id="lb-date"></div>
+  <div class="lb-counter" id="lb-counter"></div>
+  <button class="lb-next" onclick="stepLB(1)">❯</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <h4>Odisha Taekwondo Association</h4>
+      <p>The apex body for running, promoting &amp; managing Taekwondo in the State of Odisha since 1978.</p>
+    </div>
+    <div>
+      <h4>Head Office Address</h4>
+      <p>Kalpana Sagar Complex, Sipasarubali,<br/>Baliapanda, Post- Puri,<br/>PIN- 752001, Odisha</p>
+    </div>
+    <div>
+      <h4>Working Hours</h4>
+      <p>Monday to Saturday<br/>10:00 AM – 05:00 PM</p>
+    </div>
+    <div>
+      <h4>Follow Us</h4>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/odishaota/" target="_blank">Facebook</a>
+        <a href="https://x.com/otaodisha" target="_blank">Twitter/X</a>
+        <a href="https://www.instagram.com/odishataekwondoassociation/" target="_blank">Instagram</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 Odisha Taekwondo Association. All Rights Reserved. &nbsp;|&nbsp;
+    <a href="#">Terms &amp; Conditions</a> &nbsp;|&nbsp;
+    <a href="#">Privacy Policy</a>
+  </div>
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────
+const BASE = 'https://www.odishataekwondoassociation.com/assets/uploads/photos/';
+const NBASE= 'https://www.odishataekwondoassociation.com/assets/uploads/news_photos/';
+
+const photos = [
+  {src: BASE+'1777483217_69f23dd1d6f26_0.jpg', date:'2026-04-29'},
+  {src: BASE+'1776624333_69e522cd97706_0.jpg',  date:'2026-04-19'},
+  {src: BASE+'1776624308_69e522b4aefce_0.jpg',  date:'2026-04-19'},
+  {src: BASE+'1776430909_69e22f3d6d94d_0.jpg',  date:'2026-04-17'},
+  {src: BASE+'1775498383_69d3f48f65949_0.jpg',  date:'2026-04-06'},
+  {src: BASE+'1775012029_69cc88bd6341c_0.jpg',  date:'2026-04-01'},
+  {src: BASE+'1774859318_69ca343664f33_0.jpg',  date:'2026-03-30'},
+  {src: BASE+'1774770212_69c8d824659d7_0.jpg',  date:'2026-03-29'},
+  {src: BASE+'1774685712_69c78e106eae8_0.jpg',  date:'2026-03-28'},
+  {src: BASE+'1774685711_69c78e0f35981_0.jpg',  date:'2026-03-28'},
+  {src: BASE+'1774685706_69c78e0ae85d1_0.jpg',  date:'2026-03-28'},
+  {src: BASE+'1774685578_69c78d8ac77b2_0.jpg',  date:'2026-03-28'},
+  {src: BASE+'1774189577_69bffc09c6e03_0.jpg',  date:'2026-03-22'},
+  {src: BASE+'1774189557_69bffbf5decfb_0.jpg',  date:'2026-03-22'},
+  {src: BASE+'1770096118_698185f6e7fb4_0.jpg',  date:'2026-02-03'},
+  {src: BASE+'1770047926_6980c9b6ec118_0.jpg',  date:'2026-02-02'},
+  {src: BASE+'1769922078_697ede1e19354_0.jpg',  date:'2026-02-01'},
+  {src: BASE+'1766836209_694fc7f1cbed2_0.jpg',  date:'2025-12-27'},
+  {src: BASE+'1766836191_694fc7dfb640b_0.jpg',  date:'2025-12-27'},
+  {src: BASE+'1766674606_694d50ae6da97_0.jpg',  date:'2025-12-25'},
+  {src: BASE+'1766674588_694d509c16419_0.jpg',  date:'2025-12-25'},
+  {src: BASE+'1766673891_694d4de38a82d_0.jpg',  date:'2025-12-25'},
+  {src: BASE+'1766673891_694d4de3ce4aa_0.jpg',  date:'2025-12-25'},
+  {src: BASE+'1766143457_694535e146f4a_0.jpg',  date:'2025-12-19'},
+  {src: BASE+'1765956131_69425a232008e_0.jpg',  date:'2025-12-17'},
+  {src: BASE+'1765717001_693eb4096483c_0.jpg',  date:'2025-12-14'},
+  {src: BASE+'1765716986_693eb3fa155f3_0.jpg',  date:'2025-12-14'},
+  {src: BASE+'1765716973_693eb3ed30f24_0.jpg',  date:'2025-12-14'},
+  {src: BASE+'1764478437_692bcde5a5923_0.jpg',  date:'2025-11-30'},
+  {src: BASE+'1763809740_692199cc4c2c7.jpg',    date:'2025-11-22'},
+  {src: BASE+'1763723613_6920495d576ab.jpg',    date:'2025-11-21'},
+  {src: BASE+'1763723596_6920494ca1bd3.jpg',    date:'2025-11-21'},
+  {src: BASE+'1763723566_6920492eb91c3.jpg',    date:'2025-11-21'},
+  {src: BASE+'1763723544_6920491830dcd.jpg',    date:'2025-11-21'},
+  {src: BASE+'1763525427_691d43330a73b.jpg',    date:'2025-11-19'},
+  {src: BASE+'1763374534_691af5c624449.jpg',    date:'2025-11-17'},
+  {src: BASE+'1763263300_6919434492424.jpg',    date:'2025-11-16'},
+  {src: BASE+'1762879830_69136956c8de7.jpg',    date:'2025-11-11'},
+  {src: BASE+'1762879658_691368aa84f24.jpg',    date:'2025-11-11'},
+  {src: BASE+'1762879560_69136848e70cc.jpg',    date:'2025-11-11'},
+  {src: BASE+'1762875347_691357d3901a3.jpg',    date:'2025-11-11'},
+];
+
+const newsPhotos = [
+  {src: NBASE+'1763953461_6923cb35e6405.jpg', date:'2025-11-22'},
+  {src: NBASE+'1763953468_6923cb3cadb35.jpg', date:'2025-11-22'},
+  {src: NBASE+'1763953476_6923cb44aed97.jpg', date:'2025-11-22'},
+  {src: NBASE+'1764040559_69251f6f4a1d1.jpg', date:'2025-11-23'},
+  {src: NBASE+'1764040567_69251f77bb66c.jpg', date:'2025-11-23'},
+];
+
+const selfiePhotos = [
+  {src: BASE+'1770120618_6981e5aa3beb0_0.jpg', date:'2026-02-03'},
+  {src: BASE+'1766836142_694fc7aeca834_0.jpg',  date:'2025-12-27'},
+  {src: BASE+'1766836130_694fc7a264102_0.jpg',  date:'2025-12-27'},
+  {src: BASE+'1766674569_694d5089c0b1e_0.jpg',  date:'2025-12-25'},
+  {src: BASE+'1766674558_694d507e5770c_0.jpg',  date:'2025-12-25'},
+];
+
+const posterPhotos = [
+  {src: BASE+'1780625849_6a2231b9eec09_0.jpg', date:'2026-05-14'},
+  {src: BASE+'1780625837_6a2231ad11093_0.jpg', date:'2026-05-14'},
+  {src: BASE+'1780066196_6a19a7940f0a7_0.jpg', date:'2026-05-08'},
+  {src: BASE+'1779698396_6a140adccbffe_0.jpg', date:'2026-05-04'},
+  {src: BASE+'1779544521_6a11b1c9ebf40_0.jpg', date:'2026-05-02'},
+];
+
+// ── GRID BUILDER ────────────────────────────────
+function buildGrid(containerId, dataArr) {
+  const el = document.getElementById(containerId);
+  if (el.childElementCount > 0) return; // already built
+  dataArr.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'photo-item';
+    div.innerHTML = `<img src="${item.src}" alt="Photo ${i+1}" loading="lazy"/><div class="photo-date">${item.date}</div>`;
+    div.onclick = () => openLB(dataArr, i);
+    el.appendChild(div);
+  });
+}
+
+// ── VIEW SWITCHER ────────────────────────────────
+const views = ['index','photos','news','selfies','posters'];
+const tabMap = {'index':0,'photos':1,'news':2,'selfies':3,'posters':4};
+
+function showView(name, btn) {
+  views.forEach(v => document.getElementById('view-'+v).style.display='none');
+  document.getElementById('view-'+name).style.display='block';
+
+  // update tabs
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', i===tabMap[name]);
+  });
+
+  // lazy-build grids
+  if(name==='photos')  buildGrid('grid-photos',  photos);
+  if(name==='news')    buildGrid('grid-news',     newsPhotos);
+  if(name==='selfies') buildGrid('grid-selfies',  selfiePhotos);
+  if(name==='posters') buildGrid('grid-posters',  posterPhotos);
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── LIGHTBOX ─────────────────────────────────────
+let lbData=[], lbIdx=0;
+
+function openLB(arr, idx){
+  lbData=arr; lbIdx=idx;
+  renderLB();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLB(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+function stepLB(dir){
+  lbIdx=(lbIdx+dir+lbData.length)%lbData.length;
+  renderLB();
+}
+function renderLB(){
+  document.getElementById('lb-img').src = lbData[lbIdx].src;
+  document.getElementById('lb-date').textContent = lbData[lbIdx].date;
+  document.getElementById('lb-counter').textContent = `${lbIdx+1} / ${lbData.length}`;
+}
+
+// keyboard nav
+document.addEventListener('keydown', e=>{
+  if(!document.getElementById('lightbox').classList.contains('open')) return;
+  if(e.key==='ArrowRight') stepLB(1);
+  if(e.key==='ArrowLeft')  stepLB(-1);
+  if(e.key==='Escape') closeLB();
+});
+// click outside image to close
+document.getElementById('lightbox').addEventListener('click', e=>{
+  if(e.target===document.getElementById('lightbox')) closeLB();
+});
+</script>
+</body>
+</html>

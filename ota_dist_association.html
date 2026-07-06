@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OTA | District Association</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f4f4;
+      color: #222;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      background: #c0392b;
+      color: #fff;
+      font-size: 13px;
+      padding: 6px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+    }
+    .top-bar a { color: #fff; text-decoration: none; }
+
+    /* HEADER */
+    header {
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 12px 40px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      gap: 20px;
+    }
+    header img.logo { height: 80px; }
+    .header-title h1 { font-size: 22px; color: #c0392b; font-weight: 800; letter-spacing: 1px; }
+    .header-title p  { font-size: 13px; color: #555; margin-top: 2px; }
+
+    /* NAV */
+    nav {
+      background: #c0392b;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: #fff; text-decoration: none;
+      padding: 13px 18px; font-size: 14px; font-weight: 600;
+      display: block; transition: background 0.2s;
+    }
+    nav a:hover, nav a.active { background: #96281b; }
+    .dropdown { position: relative; }
+    .dropdown-content {
+      display: none; position: absolute; top: 100%; left: 0;
+      background: #fff; min-width: 230px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 999;
+    }
+    .dropdown-content a {
+      color: #333; padding: 10px 16px; font-size: 13px;
+      border-bottom: 1px solid #eee;
+    }
+    .dropdown-content a:hover { background: #f9e0de; color: #c0392b; }
+    .dropdown:hover .dropdown-content { display: block; }
+
+    /* PAGE TITLE BANNER */
+    .page-banner {
+      background: linear-gradient(135deg, #c0392b 0%, #7b241c 100%);
+      color: #fff;
+      text-align: center;
+      padding: 32px 20px;
+    }
+    .page-banner h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .page-banner p { font-size: 14px; opacity: 0.85; margin-top: 6px; }
+
+    /* MAIN LAYOUT */
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 30px;
+    }
+
+    /* DISTRICT CARDS GRID */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .dist-card {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .dist-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .dist-card .card-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+      background: #eee;
+    }
+
+    .dist-card .card-body {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dist-card h5 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #c0392b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      border-left: 4px solid #c0392b;
+      padding-left: 8px;
+    }
+
+    .dist-card table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      color: #444;
+      flex: 1;
+    }
+    .dist-card table td {
+      padding: 4px 4px;
+      vertical-align: top;
+    }
+    .dist-card table td:first-child {
+      font-weight: 600;
+      color: #333;
+      width: 90px;
+      white-space: nowrap;
+    }
+    .dist-card table td:nth-child(2) {
+      color: #888;
+      width: 10px;
+      padding: 4px 6px;
+    }
+
+    .dist-card .cert-btn {
+      display: block;
+      margin-top: 14px;
+      background: #c0392b;
+      color: #fff;
+      text-align: center;
+      padding: 8px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .dist-card .cert-btn:hover { background: #96281b; }
+
+    /* SIDEBAR */
+    .sidebar {}
+    .sidebar-box {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .sidebar-box h4 {
+      font-size: 15px;
+      color: #c0392b;
+      border-left: 4px solid #c0392b;
+      padding-left: 10px;
+      margin-bottom: 14px;
+    }
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed #eee;
+      font-size: 13px;
+    }
+    .stat-item:last-child { border-bottom: none; }
+    .stat-item .num { font-weight: 800; font-size: 18px; color: #c0392b; }
+    .sidebar-box p { font-size: 13px; color: #555; line-height: 1.7; }
+    .sidebar-box a { color: #c0392b; text-decoration: none; font-size: 13px; display: block; margin-top: 4px; }
+    .sidebar-box a:hover { text-decoration: underline; }
+
+    /* FOOTER */
+    footer {
+      background: #1a1a2e;
+      color: #ccc;
+      padding: 40px 40px 20px;
+      margin-top: 30px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    footer h4 { color: #fff; font-size: 15px; margin-bottom: 12px; border-bottom: 2px solid #c0392b; padding-bottom: 6px; }
+    footer p, footer a { font-size: 13px; color: #bbb; text-decoration: none; line-height: 1.8; display: block; }
+    footer a:hover { color: #e74c3c; }
+    .footer-social { display: flex; gap: 10px; margin-top: 8px; }
+    .footer-social a { background: #c0392b; color: #fff !important; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: 600; }
+    .footer-bottom { text-align: center; margin-top: 30px; padding-top: 16px; border-top: 1px solid #333; font-size: 13px; color: #888; }
+    .footer-bottom a { color: #e74c3c; display: inline; }
+
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
+      .cards-grid { grid-template-columns: 1fr; }
+      header { padding: 12px 16px; }
+      header img.logo { height: 55px; }
+      .header-title h1 { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <a href="mailto:info.otapuri@gmail.com">📧 info.otapuri@gmail.com</a>
+  <span>📞 9338449446 / 7008130771</span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <img class="logo" src="https://www.odishataekwondoassociation.com/assets/images/logo.webp" alt="OTA Logo"/>
+  <div class="header-title">
+    <h1>ODISHA TAEKWONDO ASSOCIATION</h1>
+    <p>ଓଡିଶା ଟାଏକୋଣ୍ଡୋ ଆସୋସିଏସନ୍ &nbsp;|&nbsp; Established 1978 &nbsp;|&nbsp; Registered under Societies Registration Act 1982</p>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <a href="ota_homepage.html">Home</a>
+  <div class="dropdown">
+    <a href="#">About OTA ▾</a>
+    <div class="dropdown-content">
+      <a href="#">Executive Members</a>
+      <a href="#">OTA Colour Belt Athletes</a>
+      <a href="#">OTA Black Belt Athletes</a>
+      <a href="#">OTA Colour Belt Promotion List</a>
+      <a href="#">National Player List</a>
+      <a href="#">OTA High Dan</a>
+      <a href="#">OTA Coach</a>
+      <a href="#">Technical Officials – Kyorugi</a>
+      <a href="#">Technical Officials – Poomsae</a>
+    </div>
+  </div>
+  <a href="ota_dist_association.html" class="active">District Association</a>
+  <a href="#">OTA Affiliated Clubs</a>
+  <div class="dropdown">
+    <a href="#">Online Registration ▾</a>
+    <div class="dropdown-content">
+      <a href="#">Athlete Registration Form</a>
+      <a href="#">Belt Promotion Test Form</a>
+      <a href="#">Event Registration System</a>
+      <a href="#">Club Affiliation Form</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <a href="#">Forms ▾</a>
+    <div class="dropdown-content">
+      <a href="#">NOC Application Form</a>
+      <a href="#">Athlete Registration Form</a>
+      <a href="#">Club Affiliation Form</a>
+      <a href="#">Black Belt Promotion Form</a>
+      <a href="#">Color Belt Promotion Form</a>
+      <a href="#">Kukkiwon Application Form</a>
+    </div>
+  </div>
+  <a href="ota_gallery.html">Gallery</a>
+  <a href="#">Event</a>
+  <a href="ota_contact.html">Contact</a>
+</nav>
+
+<!-- PAGE BANNER -->
+<div class="page-banner">
+  <h1>District Taekwondo Association</h1>
+  <p>Official directory of all OTA-affiliated District Taekwondo Associations across Odisha</p>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+  <!-- CARDS GRID -->
+  <div class="cards-grid">
+
+    <!-- 1. ANGUL -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/angul.jpg" alt="Angul"/>
+      <div class="card-body">
+        <h5>Angul District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>BIKASH KUMAR NAHAK</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>PRAMOD KUMAR PRADHAN</td></tr>
+          <tr><td>District</td><td>:</td><td>ANGUL</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>7978907007</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=57&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 2. BALANGIR -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/balangir.jpg" alt="Balangir"/>
+      <div class="card-body">
+        <h5>Balangir District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>HEMANTA KUMAR PANDA</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>ASIM KUMAR BHOI</td></tr>
+          <tr><td>District</td><td>:</td><td>BALANGIR</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>7008387616</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=58&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 3. BALASORE -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/balasore.jpg" alt="Balasore"/>
+      <div class="card-body">
+        <h5>Balasore District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>ODUD KHAN</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>ATAULLA KHAN</td></tr>
+          <tr><td>District</td><td>:</td><td>BALASORE</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>9178631955</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=59&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 4. BARGARH -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/bargarh.jpg" alt="Bargarh"/>
+      <div class="card-body">
+        <h5>Bargarh District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>NABAKISHORE PANIGRAHI</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>BIJAY KUMAR BHOI</td></tr>
+          <tr><td>District</td><td>:</td><td>BARGARH</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>9437373862</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=60&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 5. BHADRAK -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/bhadrak.jpg" alt="Bhadrak"/>
+      <div class="card-body">
+        <h5>Bhadrak Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>GAJENDRA MAJHI</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>SABYASACHI BEHERA</td></tr>
+          <tr><td>District</td><td>:</td><td>BHADRAK</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>8984308041</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=61&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 6. BOUDH -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/boudh.jpg" alt="Boudh"/>
+      <div class="card-body">
+        <h5>Boudh Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>JAGYESWAR MISHRA</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>ANJIT KUMAR SAHU</td></tr>
+          <tr><td>District</td><td>:</td><td>BOUDH</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>8327764252</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=62&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 7. CUTTACK -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/1768020689_6961dad11d981.jpg" alt="Cuttack"/>
+      <div class="card-body">
+        <h5>Cuttack District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>SK NISAR AHMAD</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>MANMOHAN BHANJA</td></tr>
+          <tr><td>District</td><td>:</td><td>CUTTACK</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>9338449446</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=63&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 8. GANJAM -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/ganjam.jpg" alt="Ganjam"/>
+      <div class="card-body">
+        <h5>Ganjam District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>MRS. ANITA MISHRA</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>K. MANOJ PRADHAN</td></tr>
+          <tr><td>District</td><td>:</td><td>GANJAM</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>9937356141</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=64&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 9. JAGATSINGHPUR -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/1768273117_6965b4dd2e8ad.jpg" alt="Jagatsinghpur"/>
+      <div class="card-body">
+        <h5>Jagatsinghpur District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>MANMATH BARIK</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>SUNITA SETHY</td></tr>
+          <tr><td>District</td><td>:</td><td>JAGATSINGHPUR</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>9439094498</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=65&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 10. JAJPUR -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/jajpur.jpg" alt="Jajpur"/>
+      <div class="card-body">
+        <h5>Jajpur District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>KARNATA KESHARI DAS</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>JAJATI KESHARI DHAL</td></tr>
+          <tr><td>District</td><td>:</td><td>JAJPUR</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>8114938061</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=66&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 11. KANDHAMAL -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/1769672234_697b0e2aa3a99.jpg" alt="Kandhamal"/>
+      <div class="card-body">
+        <h5>Kandhamal District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>PRATAP KUMAR MUKHI</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>PRABHAT KUMAR SAHOO</td></tr>
+          <tr><td>District</td><td>:</td><td>KANDHAMAL</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>9777106789</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=67&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 12. KENDRAPARA -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/kendrapara.jpg" alt="Kendrapara"/>
+      <div class="card-body">
+        <h5>Kendrapara Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>NARESH KUMAR BARIK</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>BIBEKANANDA SAMAL</td></tr>
+          <tr><td>District</td><td>:</td><td>KENDRAPARA</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>7735112278</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=68&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 13. KEONJHAR -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/keonjhar.jpg" alt="Keonjhar"/>
+      <div class="card-body">
+        <h5>Taekwondo Association of Keonjhar</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>MOULINDU KUMAR MAHANTA</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>MD. RAMJAN</td></tr>
+          <tr><td>District</td><td>:</td><td>KEONJHAR</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>7008261970</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=69&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 14. KHORDHA -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/khordha.jpg" alt="Khordha"/>
+      <div class="card-body">
+        <h5>Khordha Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>BYOMOKESH AVILASH PRASAD</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>AJAY KUMAR SAHOO</td></tr>
+          <tr><td>District</td><td>:</td><td>KHORDHA</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>7008506274</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=70&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 15. PURI -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/puri.jpg" alt="Puri"/>
+      <div class="card-body">
+        <h5>Taekwondo Association of Puri</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>DHABALESH MAHAPATRA</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>MANMOHAN BHANJA</td></tr>
+          <tr><td>District</td><td>:</td><td>PURI</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>9338449446</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=72&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 16. SUBARNAPUR -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/subarnapur.jpg" alt="Subarnapur"/>
+      <div class="card-body">
+        <h5>Subarnapur District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>RABINDRA HOTA</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>EHSAAS HOTA</td></tr>
+          <tr><td>District</td><td>:</td><td>SUBARNAPUR</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>7749852339</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=73&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 17. SUNDARGARH -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/sundargarh.jpg" alt="Sundargarh"/>
+      <div class="card-body">
+        <h5>Sundargarh Taekwondo Sports Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>SIDHI SWARNAKAR</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>MANOJ KUMAR BADI</td></tr>
+          <tr><td>District</td><td>:</td><td>SUNDARGARH</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>7978905584</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=74&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 18. JHARSUGUDA -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/1768379425_696754219013c.jpg" alt="Jharsuguda"/>
+      <div class="card-body">
+        <h5>Jharsuguda District Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>EHSAAS HOTA</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>MANISH MOHANTY</td></tr>
+          <tr><td>District</td><td>:</td><td>JHARSUGUDA</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>8144170551</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=75&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+    <!-- 19. BHUBANESWAR -->
+    <div class="dist-card">
+      <img class="card-img" src="https://www.odishataekwondoassociation.com/assets/images/dist_association_photos/1769229432_69744c78ac6e2.jpg" alt="Bhubaneswar"/>
+      <div class="card-body">
+        <h5>Bhubaneswar Amateur Taekwondo Association</h5>
+        <table>
+          <tr><td>President</td><td>:</td><td>MANMOHAN BHANJA</td></tr>
+          <tr><td>Secretary</td><td>:</td><td>EHSAAS HOTA</td></tr>
+          <tr><td>District</td><td>:</td><td>BHUBANESWAR</td></tr>
+          <tr><td>Contact No.</td><td>:</td><td>9338449446 / 7749852339</td></tr>
+        </table>
+        <a class="cert-btn" href="https://www.odishataekwondoassociation.com/generate_pdf/generate_dta_cert.php?id=77&t=1781447917" target="_blank">⬇ Download Affiliation Certificate</a>
+      </div>
+    </div>
+
+  </div><!-- end cards-grid -->
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-box">
+      <h4>OTA Statistics</h4>
+      <div class="stat-item"><span>Colour Belt Athletes</span><span class="num">5395</span></div>
+      <div class="stat-item"><span>Black Belt Athletes</span><span class="num">420</span></div>
+      <div class="stat-item"><span>Kyorugi Referees</span><span class="num">122</span></div>
+      <div class="stat-item"><span>Poomsae Referees</span><span class="num">22</span></div>
+      <div class="stat-item"><span>District Associations</span><span class="num">19</span></div>
+    </div>
+
+    <div class="sidebar-box">
+      <h4>Head Office</h4>
+      <p>Kalpana Sagar Complex, Sipasarubali, Baliapanda,<br/>Post- Puri, PIN- 752001, Odisha</p>
+    </div>
+
+    <div class="sidebar-box">
+      <h4>Working Hours</h4>
+      <p>Monday to Saturday<br/>10:00 AM – 05:00 PM</p>
+    </div>
+
+    <div class="sidebar-box">
+      <h4>Get in Touch</h4>
+      <a href="mailto:info.otapuri@gmail.com">📧 info.otapuri@gmail.com</a>
+      <a href="tel:9338449446">📞 9338449446</a>
+      <a href="tel:7008130771">📞 7008130771</a>
+    </div>
+  </aside>
+
+</div><!-- end container -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <h4>Odisha Taekwondo Association</h4>
+      <p>The apex body for running, promoting &amp; managing Taekwondo in the State of Odisha since 1978.</p>
+    </div>
+    <div>
+      <h4>Head Office Address</h4>
+      <p>Kalpana Sagar Complex, Sipasarubali,<br/>Baliapanda, Post- Puri,<br/>PIN- 752001, Odisha</p>
+    </div>
+    <div>
+      <h4>Working Hours</h4>
+      <p>Monday to Saturday<br/>10:00 AM – 05:00 PM</p>
+    </div>
+    <div>
+      <h4>Follow Us</h4>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/odishaota/" target="_blank">Facebook</a>
+        <a href="https://x.com/otaodisha" target="_blank">Twitter/X</a>
+        <a href="https://www.instagram.com/odishataekwondoassociation/" target="_blank">Instagram</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 Odisha Taekwondo Association. All Rights Reserved. &nbsp;|&nbsp;
+    <a href="#">Terms &amp; Conditions</a> &nbsp;|&nbsp;
+    <a href="#">Privacy Policy</a>
+  </div>
+</footer>
+
+</body>
+</html>
