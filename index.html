@@ -1,0 +1,511 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MIXBOXING STATE ASSOCIATION, MAHARASHTRA - MBSAM Official Website</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      background: #c0392b;
+      color: #fff;
+      font-size: 13px;
+      padding: 6px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+    }
+    .top-bar a { color: #fff; text-decoration: none; }
+
+    /* ── HEADER ── */
+    header {
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 12px 40px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      gap: 20px;
+    }
+    header img.logo { height: 80px; }
+    .header-title h1 {
+      font-size: 22px;
+      color: #c0392b;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .header-title p {
+      font-size: 13px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: #c0392b;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      display: block;
+      transition: background 0.2s;
+    }
+    nav a:hover { background: #96281b; }
+    .dropdown { position: relative; }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #fff;
+      min-width: 230px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 999;
+    }
+    .dropdown-content a {
+      color: #333;
+      padding: 10px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid #eee;
+    }
+    .dropdown-content a:hover { background: #f9e0de; color: #c0392b; }
+    .dropdown:hover .dropdown-content { display: block; }
+
+    /* ── HERO SLIDER ── */
+    .slider {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      overflow: hidden;
+      background: #1a1a2e;
+    }
+    .slider-inner {
+      display: flex;
+      height: 100%;
+      transition: transform 0.6s ease;
+    }
+    .slide {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .slide-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .slide-overlay h2 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+    }
+    .slide-overlay p {
+      font-size: 16px;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(192,57,43,0.75);
+      color: #fff;
+      border: none;
+      font-size: 24px;
+      padding: 10px 18px;
+      cursor: pointer;
+      z-index: 10;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .slider-btn:hover { background: #c0392b; }
+    .slider-btn.prev { left: 15px; }
+    .slider-btn.next { right: 15px; }
+
+    /* ── MAIN CONTENT ── */
+    .main-content {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+
+    /* ── ABOUT SECTION ── */
+    .about-section h2 {
+      font-size: 22px;
+      color: #c0392b;
+      border-left: 5px solid #c0392b;
+      padding-left: 12px;
+      margin-bottom: 14px;
+    }
+    .about-section p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #444;
+    }
+    .about-section strong { color: #c0392b; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .stat-card {
+      background: #c0392b;
+      color: #fff;
+      padding: 16px 22px;
+      border-radius: 6px;
+      text-align: center;
+      flex: 1;
+      min-width: 140px;
+    }
+    .stat-card .num { font-size: 28px; font-weight: 800; }
+    .stat-card .label { font-size: 13px; margin-top: 4px; opacity: 0.9; }
+
+    /* ── LATEST INFO ── */
+    .latest-info h3 {
+      font-size: 18px;
+      color: #c0392b;
+      border-left: 4px solid #c0392b;
+      padding-left: 10px;
+      margin-bottom: 12px;
+    }
+    .latest-info ul { list-style: none; }
+    .latest-info ul li {
+      padding: 9px 0;
+      border-bottom: 1px dashed #ddd;
+      font-size: 14px;
+    }
+    .latest-info ul li::before {
+      content: "📌 ";
+    }
+    .latest-info ul li a {
+      color: #c0392b;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .latest-info ul li a:hover { text-decoration: underline; }
+
+    /* ── GALLERY SECTION ── */
+    .gallery-section {
+      max-width: 1200px;
+      margin: 0 auto 30px;
+      padding: 0 20px;
+    }
+    .gallery-section h2 {
+      font-size: 22px;
+      color: #c0392b;
+      border-left: 5px solid #c0392b;
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .gallery-grid img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      transition: transform 0.2s;
+    }
+    .gallery-grid img:hover { transform: scale(1.03); }
+    .view-all-btn {
+      display: inline-block;
+      margin-top: 14px;
+      background: #c0392b;
+      color: #fff;
+      padding: 9px 22px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .view-all-btn:hover { background: #96281b; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1a1a2e;
+      color: #ccc;
+      padding: 40px 40px 20px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    footer h4 {
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #c0392b;
+      padding-bottom: 6px;
+    }
+    footer p, footer a {
+      font-size: 13px;
+      color: #bbb;
+      text-decoration: none;
+      line-height: 1.8;
+      display: block;
+    }
+    footer a:hover { color: #e74c3c; }
+    .footer-social { display: flex; gap: 12px; margin-top: 8px; }
+    .footer-social a {
+      background: #c0392b;
+      color: #fff !important;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .footer-bottom {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 16px;
+      border-top: 1px solid #333;
+      font-size: 13px;
+      color: #888;
+    }
+    .footer-bottom a { color: #e74c3c; display: inline; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <a href="mailto:mixboxingmaharashtra@gmail.com">📧 mixboxingmaharashtra@gmail.com</a>
+  <span>📞 8308500918 / 9767619925 </span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <img class="logo" src="https://www.mixboxingmaharashtra.com/assets/images/MIXBOXING STATE ASSOCIATION MAHARASHTRA  LOGO" alt="MIXBOXING STATE ASSOCIATION MAHARASHTRA  LOGO" onerror="this.style.display='none'"/>
+  <div class="header-title">
+    <h1>MIXBOXING STATE ASSOCIATION, MAHARASHTRA</h1>
+    <p> मिक्स-बाँक्सिंग स्टेट असोसिएशन, महाराष्ट्र &nbsp;|&nbsp; Established 1978 &nbsp;|&nbsp; Registered under Societies Registration Act 1982</p>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <a href="MBSAM_homepage.html">Home</a>
+  <div class="dropdown">
+    <a href="#">About MBSAM ▾</a>
+    <div class="dropdown-content">
+      <a href="#">Executive Members</a>
+      <a href="#"> MBSAM Colour Belt Athletes</a>
+      <a href="#">MBSAM Black Belt Athletes</a>
+      <a href="#">MBSAM Colour Belt Promotion List</a>
+      <a href="#">National Player List</a>
+      <a href="#">MBSAM High Dan</a>
+      <a href="#">MBSAM Coach</a>
+      <a href="#">Technical Officials – Kyorugi</a>
+      <a href="#">Technical Officials – Poomsae</a>
+    </div>
+  </div>
+  <a href="MBSAM_dist_association.html">District Association</a>
+  <a href="#">MBSAM Affiliated Clubs</a>
+  <div class="dropdown">
+    <a href="#">Online Registration ▾</a>
+    <div class="dropdown-content">
+      <a href="#">Athlete Registration Form</a>
+      <a href="#">Belt Promotion Test Form</a>
+      <a href="#">Event Registration System</a>
+      <a href="#">Club Affiliation Form</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <a href="#">Forms ▾</a>
+    <div class="dropdown-content">
+      <a href="#">NOC Application Form</a>
+      <a href="#">Athlete Registration Form</a>
+      <a href="#">Club Affiliation Form</a>
+      <a href="#">Black Belt Promotion Form</a>
+      <a href="#">Color Belt Promotion Form</a>
+      <a href="#">Kukkiwon Application Form</a>
+    </div>
+  </div>
+  <a href="MBSAM_gallery.html">Gallery</a>
+  <a href="#">Event</a>
+  <a href="MBSAM_contact.html">Contact</a>
+</nav>
+
+<!-- HERO SLIDER -->
+<div class="slider">
+  <div class="slider-inner" id="sliderInner">
+    <div class="slide">
+      <img src="E:/MIXBOXING/Archive/assets/MIXBOXING STATE ASSOCIATION MAHARASHTRA LOGO.jpg" alt="MBSAM Slide 1" onerror="this.style.background='#1a1a2e'"/>
+      <div class="slide-overlay">
+        <h2>MIXBOXING STATE ASSOCIATION, MAHARASHTRA</h2>
+        <p>Promoting Mixboxing Excellence Since 2016 </p>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://www.mixboxingmaharashtra.com/assets/All logo jpg.jpg" alt="MBSAM Slide 2" onerror="this.style.background='#1a1a2e'"/>
+      <div class="slide-overlay">
+        <h2>STATE CHAMPIONSHIPS</h2>
+        <p>Kyorugi &amp; Poomsae – Odisha's Finest Athletes</p>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://www.mixboxingmaharashtra.com/assets/uploads/photos/1762653155_690ff3e3c891d.jpg" alt="MBSAM Slide 3" onerror="this.style.background='#1a1a2e'"/>
+      <div class="slide-overlay">
+        <h2>NATIONAL RECOGNITION</h2>
+        <p>Building Champions for India</p>
+      </div>
+    </div>
+  </div>
+  <button class="slider-btn prev" onclick="changeSlide(-1)">&#10094;</button>
+  <button class="slider-btn next" onclick="changeSlide(1)">&#10095;</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+  <!-- LEFT: ABOUT + STATS -->
+  <div>
+    <div class="about-section">
+      <h2> MIXBOXING STATE ASSOCIATION, MAHARASHTRA </h2>
+      <p>
+        MIXBOXING STATE ASSOCIATION, MAHARASHTRA, in short <strong>MBSAM</strong>, is constituted in the year
+        <strong>2016</strong> and is an association for Mixboxing sports registered under
+        Societies Registration Act in the year <strong>2016</strong>. MBSAM is the oldest association
+        in the State and is an apex body for running, promoting &amp; managing Mixboxing in the
+        State of Maharashtra.
+      </p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="num">450</div>
+        <div class="label">Registered Mixboxing Athletes</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">105</div>
+        <div class="label">Registered Black Belt Athletes</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">75</div>
+        <div class="label">Mixboxing State Referees</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">151</div>
+        <div class="label">Mixboxing National Referee </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: LATEST INFO -->
+  <div class="latest-info">
+    <h3>Latest Information</h3>
+    <ul>
+      <li><a href="#">Outlines for MixBoxing State Association,Maharashtra Championship-2026</a></li>
+      <li><a href="#">Notice for MBSAM General Body Meeting-2026</a></li>
+      <li><a href="#">Notice for National Referee Seminar-2026</a></li>
+      <li><a href="#">MixBoxing State Association,Maharashtra Championship-2026 (Invitation)</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- GALLERY SECTION -->
+<div class="gallery-section">
+  <h2>Gallery – Photos</h2>
+  <div class="gallery-grid">
+    <img src="https://www.mixboxingmaharashtra.com/assets/uploads/photos/1777483217_69f23dd1d6f26_0.jpg" alt="Gallery 1"/>
+    <img src="https://www.mixboxingmaharashtra.com/assets/uploads/photos/1776624333_69e522cd97706_0.jpg" alt="Gallery 2"/>
+    <img src="https://www.mixboxingmaharashtra.com/assets/uploads/photos/1776624308_69e522b4aefce_0.jpg" alt="Gallery 3"/>
+    <img src="https://www.mixboxingmaharashtra.com/assets/uploads/photos/1776430909_69e22f3d6d94d_0.jpg" alt="Gallery 4"/>
+    <img src="https://www.mixboxingmaharashtra.com/assets/uploads/photos/1775498383_69d3f48f65949_0.jpg" alt="Gallery 5"/>
+  </div>
+  <a href="MBSAM_gallery.html" class="view-all-btn">View All Photos</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <h4>MIXBOXING STATE ASSOCIATION, MAHARASHTRA</h4>
+      <p>The apex body for running, promoting &amp; managing Mixboxing in the State of Maharashtra since 2016.</p>
+    </div>
+    <div>
+      <h4>Head Office Address</h4>
+      <p>AT. POKHARDI, Post-SHENDI <br/>TAL & DIST.AHILYANAGAR <br/>PIN- 414601, MAHARASHTRA </p>
+    </div>
+    <div>
+      <h4>Working Hours</h4>
+      <p>Monday to Saturday<br/>10:00 AM – 05:00 PM</p>
+    </div>
+    <div>
+      <h4>Get in Touch</h4>
+      <a href="mailto:mixboxingmaharashtra@gmail.com">📧 mixboxingmaharashtra@gmail.com </a>
+      <a href="tel:8308500918">📞 8308500918 </a>
+      <a href="tel:9767619925">📞 9767619925</a>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/MixBoxing Maharashtra/" target="_blank">Facebook</a>
+        <a href="https://x.com/" target="_blank">Twitter/X</a>
+        <a href="https://www.instagram.com/mix_boxing_maharashtra/" target="_blank">Instagram</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 MIXBOXING STATE ASSOCIATION, MAHARASHTRA. All Rights Reserved. &nbsp;|&nbsp;
+    <a href="#">Terms &amp; Conditions</a> &nbsp;|&nbsp;
+    <a href="#">Privacy Policy</a>
+  </div>
+</footer>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const inner = document.getElementById('sliderInner');
+
+  function goTo(n) {
+    current = (n + slides.length) % slides.length;
+    inner.style.transform = `translateX(-${current * 100}%)`;
+  }
+  function changeSlide(dir) { goTo(current + dir); }
+
+  // Auto-play every 4s
+  setInterval(() => changeSlide(1), 4000);
+</script>
+</body>
+</html>
